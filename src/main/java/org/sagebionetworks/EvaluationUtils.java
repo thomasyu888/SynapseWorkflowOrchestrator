@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
@@ -24,10 +25,15 @@ import org.sagebionetworks.repo.model.annotation.Annotations;
 import org.sagebionetworks.repo.model.annotation.DoubleAnnotation;
 import org.sagebionetworks.repo.model.annotation.LongAnnotation;
 import org.sagebionetworks.repo.model.annotation.StringAnnotation;
+// import org.sagebionetworks.repo.model.annotation.v2.Annotations;
+import org.sagebionetworks.repo.model.annotation.v2.AnnotationsValue;
+import org.sagebionetworks.repo.model.annotation.v2.AnnotationsValueType;
 import org.sagebionetworks.schema.adapter.JSONObjectAdapterException;
+
 
 public class EvaluationUtils {
 	private static final int PAGE_SIZE = 10;
+	private org.sagebionetworks.repo.model.annotation.v2.Annotations SubmissionAnnotations;
 
 	// submission annotation names
 	public static final String WORKFLOW_JOB_ID = "orgSagebionetworksSynapseWorkflowOrchestratorWorkflowJobId";
@@ -43,7 +49,7 @@ public class EvaluationUtils {
 	public static final String SUBMISSION_PROCESSING_STARTED_SENT = "orgSagebionetworksSynapseWorkflowOrchestratorSubmissionProcessingStartedSent";
 	public static final String PROGRESS = "orgSagebionetworksSynapseWorkflowOrchestratorProgress";
 	public static final boolean ADMIN_ANNOTS_ARE_PRIVATE = true;
-
+	
 	//annotation values
 	public static final String STOPPED_UPON_REQUEST_ANNOTATION_VALUE = "STOPPED UPON REQUEST";
 	public static final String DOCKER_PULL_FAILED_ANNOTATION_VALUE = "DOCKER PULL FAILED";
@@ -145,11 +151,17 @@ public class EvaluationUtils {
 	public static void setAnnotation(SubmissionStatus status, String key, String value, boolean isPrivate) {
 		if (value!=null && value.length()>499) value = value.substring(0, 499);
 		Annotations annotations = status.getAnnotations();
+		// Annotations submissionAnnotations = status.getSubmissionAnnotations();
+
 		if (annotations==null) {
 			annotations=new Annotations();
 			status.setAnnotations(annotations);
 		}
 		List<StringAnnotation> sas = annotations.getStringAnnos();
+		Map<SubmissionAnnotations> foo = status.getSubmissionAnnotations();
+		List<String> stringlist = new ArrayList<String>();
+		stringlist.add(value);
+
 		if (sas==null) {
 			sas = new ArrayList<StringAnnotation>();
 			annotations.setStringAnnos(sas);
@@ -171,6 +183,13 @@ public class EvaluationUtils {
 			matchingSa.setIsPrivate(isPrivate);
 			matchingSa.setValue(value);
 		}
+		AnnotationsValue suba = new AnnotationsValue();
+		suba.setType(AnnotationsValueType.STRING);
+		suba.setValue(stringlist);
+		foo.put(key, suba);
+		System.out.print(foo);
+		System.out.print(suba);
+
 	}
 
 	public static void setAnnotation(SubmissionStatus status, String key, long value, boolean isPrivate) {

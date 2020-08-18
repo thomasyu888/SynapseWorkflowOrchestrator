@@ -14,7 +14,7 @@ import org.sagebionetworks.client.exceptions.SynapseServiceUnavailable;
 import org.sagebionetworks.client.exceptions.SynapseTooManyRequestsException;
 import org.sagebionetworks.client.exceptions.UnknownSynapseServerException;
 
-import com.amazonaws.services.lambda.model.ServiceException;
+// import com.amazonaws.services.lambda.model.ServiceException;
 
 public class ExponentialBackoffRunner {
 	private static Logger log = Logger.getLogger(ExponentialBackoffRunner.class.getName());
@@ -53,7 +53,6 @@ public class ExponentialBackoffRunner {
 	 * @param executable
 	 * @return
 	 * @throws IOException
-	 * @throws ServiceException
 	 */
 	public <T,V> T execute(Executable<T,V> executable, V args) throws Throwable {
 		long backoff = INITIAL_BACKOFF_MILLIS;
